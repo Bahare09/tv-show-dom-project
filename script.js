@@ -1,13 +1,18 @@
 //You can edit ALL of the code here
 const rootElem = document.getElementById("root");
+//create input box for search
 let searchInput = document.createElement("input");
 searchInput.id = "searchInputId";
 searchInput.placeholder = "Search..";
 rootElem.appendChild(searchInput);
+//create a span for display the search result
 let searchDisplay = document.createElement("span");
-searchDisplay.id="searchDisplayId";
+searchDisplay.id = "searchDisplayId";
 rootElem.appendChild(searchDisplay);
-
+//create a div container for all cards
+let cardsContainer = document.createElement("div");
+rootElem.appendChild(cardsContainer);
+cardsContainer.id = "cardsContainer";
 
 //function will call when user start typing in a search box
 searchInput.addEventListener("keyup", (event) => {
@@ -18,6 +23,9 @@ searchInput.addEventListener("keyup", (event) => {
       episode.name.toLowerCase().includes(searchWord) ||
       episode.summary.toLowerCase().includes(searchWord)
   );
+  //call the function to make a new page for filter episodes
+  makePageForEpisodes(filterEpisode);
+  //display the search result
   searchDisplay.innerText = `Displaying ${filterEpisode.length} / ${allEpisodes.length} episodes`;
 });
 
@@ -28,10 +36,9 @@ function setup() {
 }
 
 function makePageForEpisodes(episodeList) {
-  let cardsContainer = document.createElement("div");
-  rootElem.appendChild(cardsContainer);
-  cardsContainer.id = "cardsContainer";
-
+  //reset the page
+  cardsContainer.innerHTML = "";
+  
   return episodeList.forEach((episode) => {
     let episodeCode = `S0${episode.season}E0${episode.number}`;
     //create a div for card
