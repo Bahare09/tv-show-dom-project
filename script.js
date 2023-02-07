@@ -20,7 +20,11 @@ cardsContainer.id = "cardsContainer";
 
 function setup() {
   const allEpisodes = getAllEpisodes();
-  makePageForEpisodes(allEpisodes);
+  fetch("https://api.tvmaze.com/shows/82/episodes")
+    .then((response) => response.json())
+    .then((data) => makePageForEpisodes(data));
+
+  // makePageForEpisodes(allEpisodes);
   searchDisplay.innerText = `Displaying ${allEpisodes.length} / ${allEpisodes.length} episodes`;
   makeSelectBox(allEpisodes);
 }
@@ -100,7 +104,5 @@ selectBox.addEventListener("change", (event) => {
     makePageForEpisodes(selectEp);
   }
 });
-
-
 
 window.onload = setup;
