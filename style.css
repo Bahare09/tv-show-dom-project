@@ -7,6 +7,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   justify-items: center;
+  
 }
 #cardId {
   background-color: rgb(202, 240, 233);
@@ -44,7 +45,7 @@ p {
   font-style: italic;
   font-size: 24px;
 }
-#selectBox{
+#selectBox,#selectBox2{
   margin: 20px;
   width: 250px;
   height: 50px;
@@ -53,5 +54,17 @@ p {
   background-color: rgb(202, 240, 233);
   border-color: aliceblue;
   font-style: italic;
+}
+footer{
+  height:100px;
+  background-color: rgb(202, 240, 233);
+  color: rgb(46, 43, 226);
+  font-size: larger;
+  font-style: italic;
+  font-weight:bold
+}
+#license-right{
+  text-align: center;
+  
 }
 

@@ -1,6 +1,10 @@
 //You can edit ALL of the code here
 const rootElem = document.getElementById("root");
 //create select-box
+const selectBox2 = document.createElement("select");
+selectBox2.id = "selectBox2";
+rootElem.appendChild(selectBox2);
+//create select-box
 const selectBox = document.createElement("select");
 selectBox.id = "selectBox";
 rootElem.appendChild(selectBox);
@@ -27,6 +31,9 @@ function setup() {
   // makePageForEpisodes(allEpisodes);
   searchDisplay.innerText = `Displaying ${allEpisodes.length} / ${allEpisodes.length} episodes`;
   makeSelectBox(allEpisodes);
+  const allShows = getAllShows();
+  console.log(allShows);
+  makeSelectBox2(allShows);
 }
 
 //create episodeTitle
@@ -80,6 +87,8 @@ searchInput.addEventListener("keyup", (event) => {
 });
 // function for create select options
 function makeSelectBox(episodeList) {
+  //reset the select box
+  document.getElementById("selectBox").innerHTML = "";
   let option = document.createElement("option");
   option.innerText = "All Episodes";
   document.getElementById("selectBox").appendChild(option);
@@ -103,6 +112,37 @@ selectBox.addEventListener("change", (event) => {
 
     makePageForEpisodes(selectEp);
   }
+});
+
+//function for create select options (series)
+function makeSelectBox2(AllShows) {
+  let option = document.createElement("option");
+  option.innerText = "All Shows";
+  document.getElementById("selectBox2").appendChild(option);
+  AllShows.sort((a,b)=> {
+    if (a.name < b.name) return -1;
+     if (a.name > b.name) return 1;
+     return 0;})
+  .forEach((show) => {
+    let option = document.createElement("option");
+    option.innerText = (show.name).toUpperCase();
+    //get the id for finding API address for each show
+    option.value = show.id;
+    document.getElementById("selectBox2").appendChild(option);
+  });
+}
+
+selectBox2.addEventListener("change", (event) => {
+  const selectedShow = event.target.value;
+  console.log(selectedShow);
+  fetch(`https://api.tvmaze.com/shows/${selectedShow}/episodes`)
+    .then((response) => response.json())
+    .then((data) => {
+      makePageForEpisodes(data);
+
+      makeSelectBox(data);
+      searchDisplay.innerText = `Displaying ${data.length} / ${data.length} episodes`;
+    });
 });
 
 window.onload = setup;
