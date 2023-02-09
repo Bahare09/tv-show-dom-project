@@ -22,11 +22,10 @@ let cardsContainer = document.createElement("div");
 rootElem.appendChild(cardsContainer);
 cardsContainer.id = "cardsContainer";
 let allEpisodes = [];
-let url = "https://api.tvmaze.com/shows/82/episodes";
 
 function setup() {
   //const allEpisodes = getAllEpisodes();
-  // fetch(url)
+  // fetch("https://api.tvmaze.com/shows/82/episodes")
   //   .then((response) => response.json())
   //   .then((data) => {
   //     allEpisodes = data;
@@ -36,7 +35,7 @@ function setup() {
   //   });
 
   const allShows = getAllShows();
-  
+
   makeSelectBox2(allShows);
 }
 
@@ -142,7 +141,6 @@ function makeSelectBox2(AllShows) {
 selectBox2.addEventListener("change", (event) => {
   const selectedShow = event.target.value;
   console.log(selectedShow);
-  url = `https://api.tvmaze.com/shows/${selectedShow}/episodes`;
   fetch(`https://api.tvmaze.com/shows/${selectedShow}/episodes`)
     .then((response) => response.json())
     .then((data) => {
