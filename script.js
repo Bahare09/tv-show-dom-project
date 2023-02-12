@@ -5,9 +5,11 @@ const selectBox2 = document.createElement("select");
 selectBox2.id = "selectBox2";
 rootElem.appendChild(selectBox2);
 //create select-box
+const selectDiv = document.createElement("div");
+rootElem.appendChild(selectDiv);
 const selectBox = document.createElement("select");
 selectBox.id = "selectBox";
-rootElem.appendChild(selectBox);
+selectDiv.appendChild(selectBox);
 //create input box for search
 let searchInput = document.createElement("input");
 searchInput.id = "searchInputId";
@@ -22,24 +24,13 @@ let cardsContainer = document.createElement("div");
 rootElem.appendChild(cardsContainer);
 cardsContainer.id = "cardsContainer";
 //create a div container for all shows
-let showsContainer = document.createElement("div");
+let showsContainer = document.createElement("ul");
 rootElem.appendChild(showsContainer);
 showsContainer.id = "showsContainer";
 let allEpisodes = [];
+const allShows = getAllShows();
 
 function setup() {
-  
-  // fetch("https://api.tvmaze.com/shows/82/episodes")
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //     allEpisodes = data;
-  //     makePageForEpisodes(allEpisodes);
-  //     searchDisplay.innerText = `Displaying ${allEpisodes.length} / ${allEpisodes.length} episodes`;
-  //     makeSelectBox(allEpisodes);
-  //   });
-
-  const allShows = getAllShows();
-
   makeSelectBox2(allShows);
   makePageForShows(allShows);
 }
@@ -68,8 +59,9 @@ function makePageForEpisodes(episodeList) {
     //create img tag
     let epImage = document.createElement("img");
     epImage.id = "epImageId";
-    epImage.src = episode.image.medium;
     cardDiv.appendChild(epImage);
+    epImage.src = episode.image.medium;
+
     //create tag p for summary
     //let epSummary = document.createElement("p");
     //epSummary.innerText = episode.summary;
@@ -129,6 +121,7 @@ function selectEp(episodeList) {
 function makeSelectBox2(AllShows) {
   let option = document.createElement("option");
   option.innerText = "All Shows";
+  //option.value = null;
   document.getElementById("selectBox2").appendChild(option);
   AllShows.sort((a, b) => {
     if (a.name < b.name) return -1;
@@ -145,34 +138,49 @@ function makeSelectBox2(AllShows) {
 
 selectBox2.addEventListener("change", (event) => {
   const selectedShow = event.target.value;
-  console.log(selectedShow);
-  fetch(`https://api.tvmaze.com/shows/${selectedShow}/episodes`)
-    .then((response) => response.json())
-    .then((data) => {
-      showsContainer.innerHTML=""
-      makePageForEpisodes(data);
-      makeSelectBox(data);
-      search(data);
-      searchDisplay.innerText = `Displaying ${data.length} / ${data.length} episodes`;
-      selectEp(data);
-    });
+  console.log(selectDiv);
+
+  if (selectedShow === "All Shows") {
+    cardsContainer.innerHTML = "";
+    selectBox.innerHTML = "";
+    searchDisplay.innerHTML = "";
+
+    return makePageForShows(allShows);
+  } else {
+    fetch(`https://api.tvmaze.com/shows/${selectedShow}/episodes`)
+      .then((response) => response.json())
+      .then((data) => {
+        showsContainer.innerHTML = "";
+        showsContainer.value = selectedShow;
+        selectEp(data);
+        makePageForEpisodes(data);
+        makeSelectBox(data);
+        search(data);
+        searchDisplay.innerText = `Displaying ${data.length} / ${data.length} episodes`;
+      });
+  }
 });
 
 function makePageForShows(showList) {
   //reset the page
   showsContainer.innerHTML = "";
+ 
+  console.log("showList ==", showList);
 
   return showList.forEach((show) => {
     //create a div for card
-    let cardDiv2 = document.createElement("div");
+    let cardDiv2 = document.createElement("li");
     cardDiv2.id = "cardId2";
+    cardDiv2.value = show.id;
+    console.log(cardDiv2.value);
     showsContainer.appendChild(cardDiv2);
 
     //create img tag
     let shImage = document.createElement("img");
     shImage.id = "shImageId";
-    shImage.src = show.image.medium;
     cardDiv2.appendChild(shImage);
+    shImage.src = show?.image?.medium || "";
+    shImage.value = show.id;
 
     let nameSummeryDiv = document.createElement("div");
     nameSummeryDiv.id = "nameSummeryDiv";
@@ -209,27 +217,22 @@ function makePageForShows(showList) {
     const runtime = document.createElement("h3");
     runtime.innerHTML = `Runtime: ${show.runtime}`;
     cardDivDetail.appendChild(runtime);
-
-    shImage.value=show.id
-
-    shImage.addEventListener("click", (event) => {
-      const selectedShow = event.target.value;
-      console.log(selectedShow);
-      fetch(`https://api.tvmaze.com/shows/${selectedShow}/episodes`)
-        .then((response) => response.json())
-        .then((data) => {
-          showsContainer.innerHTML=""
-          makePageForEpisodes(data);
-          makeSelectBox(data);
-          search(data);
-          searchDisplay.innerText = `Displaying ${data.length} / ${data.length} episodes`;
-          selectEp(data);
-        });
-    });
-    
   });
 }
 
-
+showsContainer.addEventListener("click", (event) => {
+  const selectedShow = event.target.value;
+  console.log("show ===", event);
+  fetch(`https://api.tvmaze.com/shows/${selectedShow}/episodes`)
+    .then((response) => response.json())
+    .then((data) => {
+      showsContainer.innerHTML = "";
+      makePageForEpisodes(data);
+      makeSelectBox(data);
+      search(data);
+      searchDisplay.innerText = `Displaying ${data.length} / ${data.length} episodes`;
+      selectEp(data);
+    });
+});
 
 window.onload = setup;
