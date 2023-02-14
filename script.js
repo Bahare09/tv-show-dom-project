@@ -223,6 +223,7 @@ function makePageForShows(showList) {
 showsContainer.addEventListener("click", (event) => {
   const selectedShow = event.target.value;
   console.log("show ===", event);
+
   fetch(`https://api.tvmaze.com/shows/${selectedShow}/episodes`)
     .then((response) => response.json())
     .then((data) => {
